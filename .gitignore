@@ -4,4 +4,4 @@
 .vscode/launch.json
 .vscode/ipch
 
-.pio/*
+ESP32/pio/*
