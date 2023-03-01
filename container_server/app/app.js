@@ -1,8 +1,8 @@
 const net = require('net');
 const os = require('os');
 
-const esp32Port = 8080;
-const clientPort = 8081;
+const esp32Port = 3001;
+const clientPort = 3002;
 
 const serverEsp32 = net.createServer(socket => {
     console.log('ESP32 connected');
