@@ -1,29 +1,56 @@
 const net = require('net');
 const Speaker = require('speaker');
 
-const client = new net.Socket();
+const Client = () => {
+const [message, setMessage] = useState('');
+const [connected, setConnected] = useState(false);
+const socketRef = useRef(null);
 
-
-client.connect(8081, '192.168.1.30', () => {
-    console.log('Connected to the server');
-
-    let speaker
-
-    client.on('data', data => {
-        if (!speaker) {
-            speaker = new Speaker({
-                channels: 2,
-                bitDepth: 16,
-                sampleRate: 2250
-            });
-        }
-        speaker.write(data);
+useEffect(() => {
+    socketRef.current = net.connect({ host: 'your-server-hostname', port: 8080 }, () => {
+    console.log('Connected to server!');
+    setConnected(true);
     });
 
-    client.on('close', () => {
-        console.log('Connection closed');
-        if (speaker) {
-            speaker.end();
-        }
+    socketRef.current.on('data', (data) => {
+    const message = data.toString();
+    setMessage(message);
     });
-});
+
+    socketRef.current.on('end', () => {
+    console.log('Disconnected from server!');
+    setConnected(false);
+    });
+
+    return () => {
+    if (socketRef.current) {
+        socketRef.current.end();
+    }
+    };
+}, []);
+
+const handleSend = () => {
+    if (socketRef.current && connected) {
+    socketRef.current.write('Hello, server!');
+    }
+};
+
+return (
+    <Container>
+    <Row>
+        <Col>
+        <p>Message from server: {message}</p>
+        </Col>
+    </Row>
+    <Row>
+        <Col>
+        <Button onClick={handleSend} disabled={!connected}>
+            Send message
+        </Button>
+        </Col>
+    </Row>
+    </Container>
+);
+};
+
+export default Client;
