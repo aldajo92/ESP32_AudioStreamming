@@ -7,7 +7,7 @@ const Client = () => {
   const socketRef = useRef(null);
 
   useEffect(() => {
-    const socket = new WebSocket('ws://your-server-hostname:8080');
+    const socket = new WebSocket('ws://localhost:3002');
 
     socket.addEventListener('open', () => {
       console.log('Connected to server!');
